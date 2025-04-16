@@ -9,15 +9,15 @@ class Chat {
         if (msg.equalsIgnoreCase("exit")) {
             isExit = true;
         }
-        notify(); 
+        notify();
     }
 
     public synchronized String receiveMessage() throws InterruptedException {
         while (message == null) {
-            wait(); 
+            wait();
         }
         String receivedMessage = message;
-        message = null; 
+        message = null;
         return receivedMessage;
     }
 
@@ -37,20 +37,22 @@ class Person1Thread extends Thread {
 
     public void run() {
         while (true) {
-            System.out.println("Person 1: Enter message to send to Person 2 (or type 'exit' to quit): ");
+            System.out.print("Person 1: Enter message to send to Person 2 (or type 'exit' to quit): ");
+            System.out.flush();
             String msg = scanner.nextLine();
-            chat.sendMessage(msg);  
+            chat.sendMessage(msg);
             System.out.println("Person 1 sent: " + msg);
             if (msg.equalsIgnoreCase("exit")) {
-                break;  
+                break;
             }
 
             try {
-                String reply = chat.receiveMessage(); 
+                String reply = chat.receiveMessage();
                 System.out.println("Person 1 received: " + reply);
                 if (reply.equalsIgnoreCase("exit")) {
-                    break;  
+                    break;
                 }
+                Thread.sleep(200); // small delay to avoid I/O overlap
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -60,27 +62,31 @@ class Person1Thread extends Thread {
 
 class Person2Thread extends Thread {
     private Chat chat;
+    private Scanner scanner;
 
-    public Person2Thread(Chat chat) {
+    public Person2Thread(Chat chat, Scanner scanner) {
         this.chat = chat;
+        this.scanner = scanner;
     }
 
     public void run() {
         while (true) {
             try {
-                String msg = chat.receiveMessage();  
+                String msg = chat.receiveMessage();
                 System.out.println("Person 2 received: " + msg);
                 if (msg.equalsIgnoreCase("exit") || chat.isExit()) {
                     System.out.println("Person 2 is exiting.");
-                    break;  
+                    break;
                 }
 
-                System.out.println("Person 2: Enter message to send to Person 1 (or type 'exit' to quit): ");
-                String reply = new Scanner(System.in).nextLine();
-                chat.sendMessage(reply);  
+                Thread.sleep(200); // small delay to avoid I/O overlap
+                System.out.print("Person 2: Enter message to send to Person 1 (or type 'exit' to quit): ");
+                System.out.flush();
+                String reply = scanner.nextLine();
+                chat.sendMessage(reply);
                 System.out.println("Person 2 sent: " + reply);
                 if (reply.equalsIgnoreCase("exit")) {
-                    break;  
+                    break;
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -95,7 +101,7 @@ public class ChattingBetweenThreads {
         Scanner scanner = new Scanner(System.in);
 
         Person1Thread person1 = new Person1Thread(chat, scanner);
-        Person2Thread person2 = new Person2Thread(chat);
+        Person2Thread person2 = new Person2Thread(chat, scanner); // share same scanner
 
         person1.start();
         person2.start();
