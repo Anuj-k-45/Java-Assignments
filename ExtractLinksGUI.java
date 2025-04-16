@@ -1,10 +1,8 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.regex.*;
 import java.util.ArrayList;
+import java.util.regex.*;
+import javax.swing.*;
 
 public class ExtractLinksGUI {
     private JFrame frame;
@@ -22,12 +20,7 @@ public class ExtractLinksGUI {
         JScrollPane scrollPane = new JScrollPane(textArea);
 
         openButton = new JButton("Select HTML File");
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectFileAndExtractLinks();
-            }
-        });
+        openButton.addActionListener(e -> selectFileAndExtractLinks());
 
         frame.add(openButton, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
