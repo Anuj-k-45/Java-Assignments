@@ -6,15 +6,16 @@ import java.io.*;
 import java.util.regex.*;
 import java.util.ArrayList;
 
-public class ExtractLinksGUI extends JFrame {
+public class ExtractLinksGUI {
+    private JFrame frame;
     private JTextArea textArea;
     private JButton openButton;
 
     public ExtractLinksGUI() {
-        setTitle("HTML Link Extractor");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        frame = new JFrame("HTML Link Extractor");
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
         textArea = new JTextArea();
         textArea.setEditable(false);
@@ -28,13 +29,13 @@ public class ExtractLinksGUI extends JFrame {
             }
         });
 
-        add(openButton, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        frame.add(openButton, BorderLayout.NORTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
     }
 
     private void selectFileAndExtractLinks() {
         JFileChooser fileChooser = new JFileChooser();
-        int option = fileChooser.showOpenDialog(this);
+        int option = fileChooser.showOpenDialog(frame); // use frame here
         
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -76,7 +77,14 @@ public class ExtractLinksGUI extends JFrame {
         }
     }
 
+    public void show() {
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ExtractLinksGUI().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            ExtractLinksGUI gui = new ExtractLinksGUI();
+            gui.show();
+        });
     }
 }
